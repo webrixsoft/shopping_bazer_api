@@ -1,0 +1,30 @@
+{
+  "name": "shopping_api",
+  "version": "1.0.0",
+  "description": "E-comm Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webrixsoft/shopping_bazer_api.git"
+  },
+  "keywords": [
+    "backend",
+    "data"
+  ],
+  "author": "webrix soft technologies",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/webrixsoft/shopping_bazer_api/issues"
+  },
+  "homepage": "https://github.com/webrixsoft/shopping_bazer_api#readme",
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.1.1",
+    "nodemon": "^3.0.3"
+  }
+}
