@@ -6,9 +6,9 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 const connectionParams = {
-        useNewUrlParser: true,
+        // useNewUrlParser: true,
         // useCreateIndex: true,
-        useUnifiedTopology: true
+        // useUnifiedTopology: true
 }
 
 mongoose.connect(process.env.DATABASE, connectionParams)
@@ -18,6 +18,7 @@ mongoose.connect(process.env.DATABASE, connectionParams)
                 console.error(`Error connecting to the database. n${err}`)
         })
         
-const server = app.listen(PORT, () => {
-        console.log(`App running on port ${PORT} and ${process.env.DATABASE}...`);
-});
+        
+        const server = app.listen(PORT, () => {
+            console.log(`App running on port ${PORT} and ${process.env.DATABASE}...`);
+        })
