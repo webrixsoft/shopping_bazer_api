@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/webrixsoft/shopping_bazer_api#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "mongodb": "^6.3.0",
@@ -28,4 +29,3 @@
     "nodemon": "^3.0.3"
   }
 }
-
