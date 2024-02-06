@@ -18,7 +18,10 @@ var corsOptionsDelegate = function (req, callback) {
   callback(null, corsOptions) // callback expects two parameters: error and options
 }
 const authRoutes = require("./Routes/AuthRoutes/authRoutes");
+
 app.use('/api/auth', cors(corsOptionsDelegate), authRoutes);
+
+
 
 
 
