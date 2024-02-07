@@ -1,24 +1,20 @@
+require('dotenv').config()
 const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
+const port = process.env.PORT || 3000;
+
+
+process.on('uncaughtException', err => {
+        console.log('UNCAUGHT EXCEPTION! Shutting down...');
+        console.log(err.name, err.message);
+        process.exit(1);
+});
 const app = require('./app');
-const dotenv = require('dotenv');
-dotenv.config();
-
-const PORT = process.env.PORT;
-const connectionParams = {
+mongoose.connect(process.env.DATABASE, {
         // useNewUrlParser: true,
-        // useCreateIndex: true,
-        // useUnifiedTopology: true
-}
+        // useCreateIndex: true
+        // useFindAndModify: false
+}).then(() => console.log('DB connection success...'));
 
-mongoose.connect(process.env.DATABASE, connectionParams)
-        .then(() => {
-                console.log('DB connection successful!....')
-        }).catch((err) => {
-                console.error(`Error connecting to the database. n${err}`)
-        })
-        
-        
-        const server = app.listen(PORT, () => {
-            console.log(`App running on port ${PORT} and ${process.env.DATABASE}...`);
-        })
+const server = app.listen(port, () => {
+        console.log(`server on port ${port}...`);
+});
