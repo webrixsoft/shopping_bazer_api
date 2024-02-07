@@ -11,9 +11,7 @@ class APIFeatures {
 
                 // 1B) Advanced filtering
                 let queryStr = JSON.stringify(queryObj);
-                // console.log(queryStr)
                 queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-                // console.log(queryStr)
                 this.query = this.query.find(JSON.parse(queryStr));
 
                 return this;
@@ -27,10 +25,7 @@ class APIFeatures {
 
                 // 1B) Advanced filtering
                 let queryStr = JSON.stringify(queryObj);
-                // console.log(excludedFields)
                 queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
-                //console.log(queryObj.search)
-
                 var searchDaynmic = {};
                 searchDaynmic[queryObj.search] = new RegExp(queryObj.value, "i");
 

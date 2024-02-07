@@ -1,24 +1,21 @@
-// require('dotenv').config()
 const path = require('path');
-const express = require('express');
 const morgan = require('morgan');
+const mongoSanitize = require('express-mongo-sanitize');
+const express = require('express');
 const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-// const mongoSanitize = require('express-mongo-sanitize');
-// const xss = require('xss-clean');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
 const compression = require('compression');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const xss = require('xss-clean');
 const cors = require('cors');
+const helmet = require('helmet');
 
 
 // aarvi
 const AppError = require('./utils/appError');
-const globalErrorHandler = require('./admin/controllers/errorHandler');
 const authRouter = require('./admin/routes/authRoutes');
 
 const app = express();
-// app.enable('trust proxy');
 
 var allowlist = ['http://localhost:8080', 'http://localhost:8000']
 var corsOptionsDelegate = function (req, callback) {
@@ -36,15 +33,10 @@ var corsOptionsDelegate = function (req, callback) {
 // Serving static files
 // app.use("/images/", express.static(path.join(__dirname, 'public/support/image')));
 
-// console.log(path.join(__dirname, 'public'));
-
-
-
 // Set security HTTP headers
 app.use(helmet());
 
 // Development logging
-
 if (process.env.NODE_ENV === 'development') {
         app.use(morgan('dev'));
 }
@@ -63,10 +55,10 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
-// app.use(mongoSanitize());
+app.use(mongoSanitize());
 
 // Data sanitization against XSS
-// app.use(xss());
+app.use(xss());
 
 app.use(compression());
 app.use(bodyParser.json())
@@ -85,20 +77,13 @@ app.get('/', (req, res, next) => {
         });
 });
 
-
-
-
 // aarvi routes
 app.use('/shopping/api/auth', cors(corsOptionsDelegate), authRouter);
-
-
-
-
 
 app.all('*', (req, res, next) => {
         next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
-
-app.use(globalErrorHandler);
+// Pending 
+// app.use(haldlingErrors);
 
 module.exports = app;

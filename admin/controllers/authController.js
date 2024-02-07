@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/authModel');
@@ -23,9 +24,9 @@ const generateUserId = async () => {
 const createSendToken = async (user, statusCode, successType, req, res) => {
         const token = await signToken(user._id);
         res.cookie('jwt', token, {
-                // expires: new Date(
-                //         Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-                // ),
+                expires: new Date(
+                        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+                ),
                 httpOnly: true,
                 secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
         });
@@ -43,13 +44,14 @@ const createSendToken = async (user, statusCode, successType, req, res) => {
 
 
 exports.signup = catchAsync(async (req, res, next) => {
+        return
         let username = await generateUserId();
         const { name, email, password, passwordConfirm } = req.body;
         const checkMail = await User.findOne({ email: email });
         if (!checkMail) {
-                // if (password != passwordConfirm) {
-                //         return next(new AppError('Password or Confirm Password are not matched!', 400));
-                // }
+                if (password != passwordConfirm) {
+                        return next(new AppError('Password or Confirm Password are not matched!', 400));
+                }
                 if (email != undefined) {
                         const newUser = await User.create({
                                 username, name, email, password, passwordConfirm
@@ -69,17 +71,17 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
         let { email, password } = req.body
         if (!password) {
-                // return next(new AppError('Please provide password!', 400));
+                return next(new AppError('Please provide password!', 400));
 
-                res.status(400).json({
-                        status: 'error',
-                        message: "Please provide password!"
-                });
+                // res.status(400).json({
+                //         status: 'error',
+                //         message: "Please provide password!"
+                // });
         }
 
         if (email != undefined) {
                 const user = await User.findOne({ email }).select('+password');
-                if (!user || !(await user.correctPassword(password, user.password))) {
+                if (!user || !(await bcrypt.compare(password, user.password))) {
                         return next(new AppError('Incorrect email or password', 401));
                 }
                 // res.status(200).json({
@@ -212,12 +214,12 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
         try {
                 const resetURL = `${req.protocol}://${req.get(
                         'host'
-                )}/api/v1/users/resetPassword/${resetToken}`;
+                )}/shopping/api/auth/resetPassword/${resetToken}`;
                 await new Email(user, resetURL).sendPasswordReset();
 
                 res.status(200).json({
                         status: 'success',
-                        message: 'Token sent to email!'
+                        message: 'Token sent to register email!'
                 });
         } catch (err) {
                 user.passwordResetToken = undefined;
@@ -225,7 +227,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
                 await user.save({ validateBeforeSave: false });
 
                 return next(
-                        new AppError('There was an error sending the email. Try again later!'),
+                        new AppError('There was an error sending the email. Please Try again later!'),
                         500
                 );
         }
@@ -262,8 +264,8 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
         // 1) Get user from collection
         const user = await User.findById(req.user.id).select('+password');
 
-        // 2) Check if POSTed current password is correct
-        if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+        // 2) Check if current password is correct
+        if (!(await bcrypt.compare(req.body.passwordCurrent, user.password))) {
                 return next(new AppError('Your current password is wrong.', 401));
         }
 

@@ -13,8 +13,8 @@ mongoose.connect(process.env.DATABASE, {
         // useNewUrlParser: true,
         // useCreateIndex: true
         // useFindAndModify: false
-}).then(() => console.log('DB connection success...'));
+}).then(() => console.log('DB connection successfully...'));
 
 const server = app.listen(port, () => {
-        console.log(`server on port ${port}...`);
+        console.log(`Server running on port ${port}...`);
 });
